@@ -111,10 +111,10 @@ class HX711:
         np_arr32 = np_arr8.view('uint32')
         self.lastVal = np_arr32
 
-        return long(self.lastVal)
+        return int(self.lastVal)
 
     def read_average(self, times=3):
-        values = long(0)
+        values = int(0)
         for i in range(times):
             values += self.read_long()
 
