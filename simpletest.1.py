@@ -33,7 +33,7 @@ _logger = logging.getLogger(__name__)
 # Uncomment one of the blocks of code below to configure your Pi to use software or hardware SPI.
 
 ## Raspberry Pi software SPI configuration.
-software_spi = {"clk": 14, "cs": 10, "do": 13, "di": 12}
+software_spi = {"clk": 11, "cs": 22, "do": 9, "di": 10}
 sensor = MAX31856(software_spi=software_spi)
 
 # Raspberry Pi hardware SPI configuration.
