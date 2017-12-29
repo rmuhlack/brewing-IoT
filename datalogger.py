@@ -10,13 +10,13 @@ from Adafruit_MAX31856 import MAX31856 as MAX31856
 
 def validate_config(c):
 
-    if not c.has_key('pi-indicator-config'):
-        print "Configuration error: Configuration must contain a pi-indicator-config section"
-        sys.exit(1)
+    # if not c.has_key('pi-indicator-config'):
+    #     print "Configuration error: Configuration must contain a pi-indicator-config section"
+    #     sys.exit(1)
 
-    if not c['pi-indicator-config'].has_key('sources'):
-        print "Configuration error: no sources defined"
-        sys.exit(1)
+    # if not c['pi-indicator-config'].has_key('sources'):
+    #     print "Configuration error: no sources defined"
+    #     sys.exit(1)
 
     return
 
