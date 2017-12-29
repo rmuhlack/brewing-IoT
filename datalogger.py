@@ -1,6 +1,7 @@
 import time
 import yaml
 import sys
+import RPi.GPIO as GPIO
 import logging
 import sources.scales
 import sources.thermometer
