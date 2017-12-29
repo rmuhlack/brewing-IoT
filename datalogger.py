@@ -21,7 +21,7 @@ def validate_config(c):
     return
 
 def post_data(delta,T1,T2):
-    print "Delta CO2 (g):{0:0.0F}  Ferment Temp (C): {0:0.3F}  Internal Temp (C): {0:0.3F}".format(delta,T1,T2)
+    print "Delta CO2 (g):{:0.0F}  Ferment Temp (C): {:0.3F}  Internal Temp (C): {:0.3F}".format(delta,T1,T2)
 
 def cleanAndExit():
     print ('Cleaning...')
