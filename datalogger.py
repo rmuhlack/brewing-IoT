@@ -57,6 +57,8 @@ sensor = MAX31856(software_spi=software_spi)
 try:
     while True:
         deltaCO2 = hx.get_weight(5)
+        hx.power_down()
+        hx.power_up()
         ferment_temp = sensor.read_temp_c()
         internal_temp = sensor.read_internal_temp_c()
         post_data(deltaCO2,ferment_temp,internal_temp)
