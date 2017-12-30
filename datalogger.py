@@ -3,10 +3,8 @@ import yaml
 import sys
 import RPi.GPIO as GPIO
 import logging
-import Adafruit_GPIO
-
-from hx711 import HX711
-from Adafruit_MAX31856 import MAX31856 as MAX31856
+import sources.scales
+import sources.thermometer
 
 def validate_config(c):
 
@@ -42,25 +40,16 @@ with open("config.yml", 'r') as stream:
 validate_config(config)
 config = config['brewing-config']
 
-hx = HX711(5, 6)
-hx.set_reading_format("LSB", "MSB")
-hx.set_reference_unit(-22.535)
-
-hx.reset()
-hx.tare()
-
-## Raspberry Pi software SPI configuration.
-software_spi = {"clk": 14, "cs": 10, "do": 13, "di": 12}
-sensor = MAX31856(software_spi=software_spi)
+# setup sensors
+sources.scales.initialise(config['hx711'])
+sources.thermometer.initialise(config['MAX31856'])
 
 # loop and collect/log data
 try:
     while True:
-        deltaCO2 = hx.get_weight(5)
-        hx.power_down()
-        hx.power_up()
-        ferment_temp = sensor.read_temp_c()
-        internal_temp = sensor.read_internal_temp_c()
+        deltaCO2 = sources.scales.getWeightDelta()
+        ferment_temp = sources.thermometer.getProbeTemperature()
+        internal_temp = sources.thermometer.getInternalTemperature()
         post_data(deltaCO2,ferment_temp,internal_temp)
 
         time.sleep(1)
