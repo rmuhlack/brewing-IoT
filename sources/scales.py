@@ -49,5 +49,5 @@ def getWeightDelta():
 
 if __name__ == "__main__":
     import sys
-    print "Should have a test harness here"
+    print ("Should have a test harness here")
 
