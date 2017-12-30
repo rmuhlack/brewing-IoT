@@ -17,7 +17,7 @@ brewing-config:
         device_id: thisbe
 
         # Authentication details for the device
-        private_key_file: private.pem
+        private_key_file: ../private.pem
         algorithm: RS256        # RS256 or ES256
 
         ca_certs: roots.pem

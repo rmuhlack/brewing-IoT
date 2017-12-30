@@ -144,7 +144,7 @@ def mqtt_initialise(config):
     # Start the network loop.
     client.loop_start()
 
-    mqtt_config['topic'] = '/devices/{}/fermenter'.format(config['device_id'])
+    mqtt_config['topic'] = '/devices/{}/events'.format(config['device_id'])
 
     
     return
@@ -153,8 +153,7 @@ def mqtt_publish_update(delta, T1, T2):
     global client
     global mqtt_config
 
-    payload = '{}/{} Time: {} Delta CO2: {:0.0F} Ferment Temperature: {:0.3F} Internal Temperature: {:0.3F}'.format(
-            mqtt_config['registry_id'], mqtt_config['device_id'],
+    payload = 'Time: {} Delta CO2: {:0.0F} Ferment Temperature: {:0.3F} Internal Temperature: {:0.3F}'.format(
             strftime("%Y-%m-%d %H:%M:%S", gmtime()),
             delta,
             T1,
