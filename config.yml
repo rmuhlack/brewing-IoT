@@ -1,0 +1,25 @@
+---
+brewing-config:
+    hx711: false
+    MAX31856: false
+    google-iot:
+        # Google cloud region, e.g. us-central1
+        cloud_region: asia-east1
+
+        # Google project identifier
+        project_id: exalted-arcanum-190600
+
+        # Gogle device registry identifier
+        registry_id: brewing 
+
+        # Device ID within the device registry above
+        #   can also be specified on the command line to override
+        device_id: thisbe
+
+        # Authentication details for the device
+        private_key_file: private.pem
+        algorithm: RS256        # RS256 or ES256
+
+        ca_certs: roots.pem
+        mqtt_bridge_hostname: mqtt.googleapis.com
+        mqtt_bridge_port: 8883

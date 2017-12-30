@@ -129,7 +129,7 @@ def mqtt_initialise(config):
                     config['project_id'], config['private_key_file'], config['algorithm']))
 
     # Enable SSL/TLS support.
-    client.tls_set(ca_certs=args.ca_certs)
+    client.tls_set(ca_certs=config['ca_certs'])
 
     # Register message callbacks. https://eclipse.org/paho/clients/python/docs/
     # describes additional callbacks that Paho supports. In this example, the
@@ -144,7 +144,7 @@ def mqtt_initialise(config):
     # Start the network loop.
     client.loop_start()
 
-    mqtt_topic = '/devices/{}/events'.format(config['device_id'])
+    mqtt_config['topic'] = '/devices/{}/events'.format(config['device_id'])
 
     
     return
@@ -165,7 +165,7 @@ def mqtt_publish_update(delta, T1, T2):
     # Publish "payload" to the MQTT topic. qos=1 means at least once
     # delivery. Cloud IoT Core also supports qos=0 for at most once
     # delivery.
-    client.publish(mqtt_topic, payload, qos=1)
+    client.publish(mqtt_config['topic'], payload, qos=1)
 
     return
 
@@ -224,7 +224,7 @@ def main():
             deltaCO2 = getWeightDelta()
             ferment_temp = getProbeTemperature()
             internal_temp = getInternalTemperature()
-            post_data(deltaCO2,ferment_temp,internal_temp)
+            mqtt_publish_update(deltaCO2,ferment_temp,internal_temp)
 
             time.sleep(1)
     except (KeyboardInterrupt):

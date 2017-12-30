@@ -1,2 +1,8 @@
 git+https://github.com/johnrbnsn/Adafruit_Python_MAX31856.git
-
+yamlconf
+pyjwt
+paho-mqtt
+cryptography
+google-api-python-client
+google-cloud-core
+google-cloud-pubsub
