@@ -17,7 +17,7 @@ def initialise(config):
     # and I got numbers around 184000 when I added 2kg. So, according to the rule of thirds:
     # If 2000 grams is 184000 then 1000 grams is 184000 / 2000 = 92.
     #hx.set_reference_unit(113)
-    hx.set_reference_unit(-22.535)
+    __hx__.set_reference_unit(-22.535)
 
     # I've found out that, for some reason, the order of the bytes is not always the same between versions of python, numpy and the hx711 itself.
     # Still need to figure out why does it change.
@@ -46,6 +46,7 @@ def getWeightDelta():
     # power down in case we are trying to be power conscious
     __hx__.power_down()
 
+    return val
 
 if __name__ == "__main__":
     import sys
