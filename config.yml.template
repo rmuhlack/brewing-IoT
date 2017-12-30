@@ -1,0 +1,23 @@
+---
+brewing-config:
+    hx711: false
+    MAX31856: false
+    google-iot:
+        # Google cloud region, e.g. us-central1
+        cloud_region: us-central1
+
+        # Google project identifier
+        project_id: foo
+
+        # Gogle device registry identifier
+        registry_id: brewing 
+
+        # Device ID within the device registry above
+	#   can also be specified on the command line to override
+        device_id: foo
+
+        # Authentication details for the device
+        private_key_file: filename.pem
+        algorithm: RS256    		# RS256 or ES256
+        
+
