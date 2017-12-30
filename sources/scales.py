@@ -41,7 +41,7 @@ def getWeightDelta():
     global __hx__
 
     __hx__.reset()
-    val = hx.get_weight(5)
+    val = __hx__.get_weight(5)
 
     # power down in case we are trying to be power conscious
     __hx__.power_down()
