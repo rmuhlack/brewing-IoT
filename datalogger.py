@@ -144,7 +144,7 @@ def mqtt_initialise(config):
     # Start the network loop.
     client.loop_start()
 
-    mqtt_config['topic'] = '/devices/{}/events'.format(config['device_id'])
+    mqtt_config['topic'] = '/devices/{}/fermenter'.format(config['device_id'])
 
     
     return
