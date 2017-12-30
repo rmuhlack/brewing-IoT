@@ -6,3 +6,5 @@ cryptography
 google-api-python-client
 google-cloud-core
 google-cloud-pubsub
+RPi.GPIO
+numpy
