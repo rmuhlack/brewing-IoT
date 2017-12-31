@@ -145,15 +145,15 @@ def mqtt_initialise(config):
     client.loop_start()
 
     mqtt_config['topic'] = '/devices/{}/events'.format(config['device_id'])
-
     
     return
 
 def mqtt_publish_update(delta, T1, T2):
     global client
     global mqtt_config
-
-    payload = 'Time: {} Delta CO2: {:0.0F} Ferment Temperature: {:0.3F} Internal Temperature: {:0.3F}'.format(
+    print(mqtt_config)
+    payload = '{{ "device_id": "{}", "timestamp": "{}", "delta_weight": "{:0.0F}", "fermenter_temp": "{:0.3F}", "internal_temp": "{:0.3F}" }}'.format(
+            mqtt_config['device_id'],
             strftime("%Y-%m-%d %H:%M:%S", gmtime()),
             delta,
             T1,
