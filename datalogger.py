@@ -13,7 +13,7 @@ import subprocess
 import jwt
 import paho.mqtt.client as mqtt
 
-def create_jwt(project_id, private_key_file, algorithm):
+def create_jwt(project_id, private_key_file, algorithm, token_issue, token_exp):
     """Creates a JWT (https://jwt.io) to establish an MQTT connection.
     Args:
      project_id: The cloud project ID this device belongs to
@@ -107,7 +107,7 @@ def parse_command_line_args():
 
     return parser.parse_args()
 
-def mqtt_initialise(config):
+def mq_initialise(config):
     # Create our MQTT client. The client_id is a unique string that identifies
     # this device. For Google Cloud IoT Core, it must be in the format below.
     global client
@@ -123,13 +123,16 @@ def mqtt_initialise(config):
 
     # With Google Cloud IoT Core, the username field is ignored, and the
     # password field is used to transmit a JWT to authorize the device.
+    token_issue = datetime.datetime.utcnow()
+    token_exp = token_issue + datetime.timedelta(minutes=60)
     client.username_pw_set(
             username='unused',
             password=create_jwt(
-                    config['project_id'], config['private_key_file'], config['algorithm']))
+                    config['project_id'], config['private_key_file'], config['algorithm'],
+                    token_issue, token_exp))
 
     # Enable SSL/TLS support.
-    client.tls_set(ca_certs=config['ca_certs'])
+    client.tls_set(ca_certs=args.ca_certs)
 
     # Register message callbacks. https://eclipse.org/paho/clients/python/docs/
     # describes additional callbacks that Paho supports. In this example, the
@@ -144,16 +147,15 @@ def mqtt_initialise(config):
     # Start the network loop.
     client.loop_start()
 
-    mqtt_config['topic'] = '/devices/{}/events'.format(config['device_id'])
-    
-    return
+    mqtt_topic = '/devices/{}/events'.format(config['device_id'])
+    return token_exp
 
 def mqtt_publish_update(delta, T1, T2):
     global client
     global mqtt_config
-    print(mqtt_config)
-    payload = '{{ "device_id": "{}", "timestamp": "{}", "delta_weight": "{:0.0F}", "fermenter_temp": "{:0.3F}", "internal_temp": "{:0.3F}" }}'.format(
-            mqtt_config['device_id'],
+
+    payload = '{}/{} Time: {} Delta CO2: {:0.0F} Ferment Temperature: {:0.3F} Internal Temperature: {:0.3F}'.format(
+            mqtt_config['registry_id'], mqtt_config['device_id'],
             strftime("%Y-%m-%d %H:%M:%S", gmtime()),
             delta,
             T1,
@@ -164,7 +166,7 @@ def mqtt_publish_update(delta, T1, T2):
     # Publish "payload" to the MQTT topic. qos=1 means at least once
     # delivery. Cloud IoT Core also supports qos=0 for at most once
     # delivery.
-    client.publish(mqtt_config['topic'], payload, qos=1)
+    client.publish(mqtt_topic, payload, qos=1)
 
     return
 
@@ -205,8 +207,8 @@ def main():
         getWeightDelta = sources.scales.getWeightDelta
 
         sources.thermometer.initialise(config['MAX31856'])
-        getProbeTemperature = sources.thermometer.getProbeTemperature
-        getInternalTemperature = sources.thermometer.getInternalTemperature
+        getProbeTemperature = sources.thermometer.getInternalTemperature
+        getInternalTemperature = sources.thermometer.getProbeTemperature
 
     else:
         getWeightDelta = getRandom
@@ -215,7 +217,7 @@ def main():
 
 
     # connect to IoT core
-    mqtt_initialise(config['google-iot'])
+    token_expiry = mqtt_initialise(config['google-iot'])
 
     # loop and collect/log data
     try:
@@ -223,10 +225,18 @@ def main():
             deltaCO2 = getWeightDelta()
             ferment_temp = getProbeTemperature()
             internal_temp = getInternalTemperature()
-            mqtt_publish_update(deltaCO2,ferment_temp,internal_temp)
+
+            # check if we need to reconnect with refreshed token
+            if (token_expiry < datetime.datetime.utcnow()):
+                # close client cleanly
+                print("MQTT / Google IoT connection requires refresh")
+                mqtt_cleanup()
+                token_expiry = mqtt_initialise(config['google-iot'])
+            post_data(deltaCO2,ferment_temp,internal_temp)
 
             time.sleep(1)
     except (KeyboardInterrupt):
+        mqtt_cleanup()
         sys.exit(0)
 
 if __name__ == '__main__':
