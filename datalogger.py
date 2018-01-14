@@ -215,8 +215,8 @@ def main():
         getWeightDelta = sources.scales.getWeightDelta
 
         sources.thermometer.initialise(config['MAX31856'])
-        getProbeTemperature = sources.thermometer.getInternalTemperature
-        getInternalTemperature = sources.thermometer.getProbeTemperature
+        getProbeTemperature = sources.thermometer.getProbeTemperature
+        getInternalTemperature = sources.thermometer.getInternalTemperature
 
     else:
         getWeightDelta = getRandom
